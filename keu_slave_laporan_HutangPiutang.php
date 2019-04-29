@@ -62,7 +62,7 @@ while($bar=mysql_fetch_object($res))
 	$kdorgdet[$bar->nojurnal]=$bar->kodeorg;
 }
 
-#ambil saldo transaksi  karyawan
+/*#ambil saldo transaksi  karyawan
 $str="select sum(a.debet) as debet,sum(a.kredit) as kredit,a.nojurnal,a.noreferensi,a.tanggal,a.keterangan,a.noakun,a.nik,a.kodeorg from ".$dbname.".keu_jurnaldt_vw a
       where a.tanggal between'".$tanggalmulai."' and '".$tanggalsampai."'  
       and a.noakun = '".$noakun."' and a.nik='".$kodesupplier."'
@@ -80,7 +80,7 @@ while($bar=mysql_fetch_object($res))
     $debet[$bar->nojurnal]+=$bar->debet;
     $kredit[$bar->nojurnal]+=$bar->kredit;
 	$kdorgdet[$bar->nojurnal]=$bar->kodeorg;
-}
+}*/
             echo"<table class=sortable cellspacing=1 border=0 width=100%>
              <thead>
                     <tr>
