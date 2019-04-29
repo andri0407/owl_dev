@@ -32,11 +32,11 @@ while($bar=mysql_fetch_object($res)){
 
 #ambil saldo awal supplier
 $str="select sum(a.debet-a.kredit) as sawal,a.noakun from ".$dbname.".keu_jurnaldt_vw a
-      where a.tanggal<'".$tanggalmulai."'  and a.noakun = '".$noakun."' and (a.kodesupplier='".$kodesupplier."' or a.nik='".$kodesupplier."')
+      where a.tanggal<'".$tanggalmulai."'  and a.noakun = '".$noakun."' and (a.kodesupplier='".$kodesupplier."' or a.nik='".$kodesupplier."' or a.kodecustomer='".$kodesupplier."')
       and a.kodeorg in( select kodeorganisasi from ".$dbname.".organisasi  where induk ='".$kodeorg."')";
 
 $str="select sum(a.debet-a.kredit) as sawal,a.noakun from ".$dbname.".keu_jurnaldt_vw a
-      where a.tanggal<'".$tanggalmulai."'  and a.noakun = '".$noakun."' and (a.kodesupplier='".$kodesupplier."' or a.nik='".$kodesupplier."')
+      where a.tanggal<'".$tanggalmulai."'  and a.noakun = '".$noakun."' and (a.kodesupplier='".$kodesupplier."' or a.nik='".$kodesupplier."' or a.kodecustomer='".$kodesupplier."')
       and ".$where."";
 $res=mysql_query($str);
 while($bar=mysql_fetch_object($res))
@@ -48,7 +48,7 @@ while($bar=mysql_fetch_object($res))
 #ambil  transaksi dalam periode supplier
 $str="select a.debet  as debet, a.kredit as kredit,a.nojurnal,a.noreferensi,a.tanggal,a.noakun,a.keterangan, a.kodesupplier,a.kodeorg from ".$dbname.".keu_jurnaldt_vw a
       where a.tanggal between'".$tanggalmulai."' and '".$tanggalsampai."' 
-      and a.noakun = '".$noakun."' and kodesupplier='".$kodesupplier."'
+      and a.noakun = '".$noakun."' and (a.kodesupplier='".$kodesupplier."' or a.nik='".$kodesupplier."' or a.kodecustomer='".$kodesupplier."')
       and ".$where." order by tanggal";
 	 // echo $str;	  
 $res=mysql_query($str);
