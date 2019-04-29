@@ -53,7 +53,7 @@ while($bar=mysql_fetch_object($res))
 $str="select sum(a.debet-a.kredit) as sawal,a.noakun, b.namaakun,a.kodecustomer as kodesupplier,c.namacustomer as namasupplier from ".$dbname.".keu_jurnaldt_vw a
       left join ".$dbname.".keu_5akun b on a.noakun = b.noakun
       left join ".$dbname.".pmn_4customer c on a.kodecustomer = c.kodecustomer
-      where a.tanggal<'".$tanggalmulai."'  and a.noakun = '".$noakun."' and a.kodecustomer!='' and a.kodecustomer is not null and a.kodecustomer!=0
+      where a.tanggal<'".$tanggalmulai."'  and a.noakun = '".$noakun."' and a.kodecustomer!='' and a.kodecustomer is not null and a.kodecustomer!='0'
       and ".$where." group by a.kodecustomer
 ";
 
@@ -124,7 +124,7 @@ $str="select sum(a.debet) as debet,sum(a.kredit) as kredit,a.noakun, b.namaakun,
       left join ".$dbname.".keu_5akun b on a.noakun = b.noakun
       left join ".$dbname.".pmn_4customer c on a.kodecustomer = c.kodecustomer
       where a.tanggal between'".$tanggalmulai."' and '".$tanggalsampai."' 
-      and a.noakun = '".$noakun."' and a.kodecustomer!='' and a.kodecustomer is not null and a.kodecustomer!=0
+      and a.noakun = '".$noakun."' and a.kodecustomer!='' and a.kodecustomer is not null and a.kodecustomer!='0'
       and ".$where." group by a.kodecustomer
 ";
 //exit("Error : ".$str);
