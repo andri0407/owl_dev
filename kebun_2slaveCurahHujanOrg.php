@@ -106,7 +106,7 @@ $rowAfd=count($dtAfd);
                  
                  if($rt2CC[$dtBln]!=0)
                  {
-                    $tab.="<td align=right>".$rt2CC[$dtBln]."</td>";
+                    $tab.="<td align=right>".number_format($rt2CC[$dtBln])."</td>";
                  }
                  else
                  {
@@ -115,7 +115,7 @@ $rowAfd=count($dtAfd);
                  
                  if($rt2Hr[$dtBln]!=0)
                  {
-                    $tab.="<td align=right>".$rt2Hr[$dtBln]."</td>";
+                    $tab.="<td align=right>".number_format($rt2Hr[$dtBln])."</td>";
                  }
                  else
                  {
@@ -162,7 +162,7 @@ $rowAfd=count($dtAfd);
                  
                  if($rt2CC[$dtBln]!=0)
                  {
-                    $tab.="<td align=right>".$rt2CC[$dtBln]."</td>";
+                    $tab.="<td align=right>".number_format($rt2CC[$dtBln])."</td>";
                  }
                  else
                  {
@@ -171,7 +171,7 @@ $rowAfd=count($dtAfd);
                  
                  if($rt2Hr[$dtBln]!=0)
                  {
-                    $tab.="<td align=right>".$rt2Hr[$dtBln]."</td>";
+                    $tab.="<td align=right>".number_format($rt2Hr[$dtBln])."</td>";
                  }
                  else
                  {
@@ -316,7 +316,7 @@ $rowAfd=count($dtAfd);
                  
                  if($rt2CC[$dtBln]!=0)
                  {
-                    $pdf->Cell(30,$height,$rt2CC[$dtBln],1,0,'R',1);
+                    $pdf->Cell(30,$height,number_format($rt2CC[$dtBln]),1,0,'R',1);
                  }
                  else
                  {
@@ -325,7 +325,7 @@ $rowAfd=count($dtAfd);
                  
                  if($rt2Hr[$dtBln]!=0)
                  {
-                    $pdf->Cell(30,$height,$rt2Hr[$dtBln],1,1,'R',1);
+                    $pdf->Cell(30,$height,number_format($rt2Hr[$dtBln]),1,1,'R',1);
                  }
                  else
                  {
