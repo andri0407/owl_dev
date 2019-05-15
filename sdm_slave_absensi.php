@@ -243,16 +243,16 @@ $catu=$_POST['catu'];
 		<td>".tanggalnormal($rlvhc['tanggal'])."</td>
 		<td>".substr(tanggalnormal($rlvhc['periode']),1,7)."</td>
 		<td align=center>";
-		if($d['tutupbuku']==0)
-		{
+		/*if($d['tutupbuku']==0)
+		{*/
 		echo"<img src=images/application/application_edit.png class=resicon  title='Edit' onclick=\"fillField('".$rlvhc['kodeorg']."','".tanggalnormal($rlvhc['tanggal'])."','".$rlvhc['periode']."');\">
 		<img src=images/application/application_delete.png class=resicon  title='Delete' onclick=\"delData('".$rlvhc['kodeorg']."','".tanggalnormal($rlvhc['tanggal'])."');\" >
 		<img src=images/pdf.jpg class=resicon  title='Print' onclick=\"masterPDF('sdm_absensiht','".$rlvhc['kodeorg'].",".tanggalnormal($rlvhc['tanggal'])."','','sdm_absensiPdf',event)\">";
-		}
+		/*}
 		else
 		{
 			echo"<img src=images/pdf.jpg class=resicon  title='Print' onclick=\"masterPDF('sdm_absensiht','".$rlvhc['kodeorg'].",".tanggalnormal($rlvhc['tanggal'])."','','sdm_absensiPdf',event)\">";
-		}
+		}*/
 		echo"</td>
 		</tr>
 		";
@@ -290,7 +290,7 @@ $catu=$_POST['catu'];
 		break;
 		case'cekHeader':
 		//echo"warning:masuk";
-		 $sCek="select DISTINCT tanggalmulai,tanggalsampai,periode from ".$dbname.".sdm_5periodegaji where kodeorg like '".$idOrg."' and periode='".$periode."' and sudahproses=0 and tanggalmulai<='".$tgl."' and tanggalsampai>='".$tgl."'";
+		 /*$sCek="select DISTINCT tanggalmulai,tanggalsampai,periode from ".$dbname.".sdm_5periodegaji where kodeorg like '".$idOrg."' and periode='".$periode."' and sudahproses=0 and tanggalmulai<='".$tgl."' and tanggalsampai>='".$tgl."'";
                 //    $sCek="select DISTINCT tanggalmulai,tanggalsampai,periode from ".$dbname.".sdm_5periodegaji where kodeorg like '".$_SESSION['empl']['lokasitugas']."' and periode='".$periode."' and sudahproses=0";
 		$qCek=mysql_query($sCek) or die(mysql_error());
 		$rCek=mysql_num_rows($qCek);
@@ -323,7 +323,7 @@ $catu=$_POST['catu'];
                 if($aktif==true)
                 {
                 	exit("Error:Periode sudah tutup buku");
-                }
+                }*/
 		break;
 		case'cariAbsn':
 
