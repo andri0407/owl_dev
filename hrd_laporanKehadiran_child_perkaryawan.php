@@ -32,21 +32,7 @@ function getHari($tanggal){
 	return $hari[$day];
 	}
 }
-
-function getTimeDiff($time1,$time2){
-	$date1 = strtotime($time1);
-	$date2 = strtotime($time2);
-	$interval = $date2 - $date1;
-	$seconds = $interval % 60;
-	$minutes = floor(($interval % 3600) / 60);
-	$hours = floor($interval / 3600);
-	if($hours<0){
-		return "-";
-	}
-	return sprintf('%02d', $hours).":".sprintf('%02d', $minutes).":".sprintf('%02d', $seconds);
-}
-
-echo getTimeDiff();
+	//var_dump($_GET);
 
 if($_GET['proses']=='getKry'){
 	$optKry="<option value=''>".$_SESSION['lang']['pilihdata']."</option>";
@@ -130,42 +116,13 @@ elseif($_GET['proses']=='preview'){
 			<td>Hari
 			<td>Absen
 			<td>Masuk (In)
-			<td>Lateness 
 			<td>Keluar (Out)
-			<td>Early
 			<td>Keterangan
 		</thead>
 		<tbody>
 	";
-	$jamMasuk = [
-		'MDHO'=>['reguler'=>'08:00:00',
-				 'shiftPagi'=>'08:00:00',
-				 'shiftMalam'=>'20:00:00'],
-		'BGRE'=>['reguler'=>'07:00:00',
-				 'shiftPagi'=>'08:00:00',
-				 'shiftMalam'=>'20:00:00'],
-
-	]; 
-
-	$jamMasuk['SLRO']=$jamMasuk['MDHO'];
-	$jamMasuk['KBHE']=$jamMasuk['KAME']=$jamMasuk['DRME']=$jamMasuk['BGRE'];
-
-	$jamPulang = [
-		'MDHO'=>['reguler'=>'17:00:00',
-				 'shiftPagi'=>'19:59:00',
-				 'shiftMalam'=>'07:59:00'],
-		'BGRE'=>['reguler'=>'16:00:00',
-				 'shiftPagi'=>'19:59:00',
-				 'shiftMalam'=>'07:59:00'],
-
-	]; 
-
-	$jamPulang['SLRO']=$jamPulang['MDHO'];
-	$jamPulang['KBHE']=$jamPulang['KAME']=$jamPulang['DRME']=$jamPulang['BGRE'];
-
-
 	/*$str="select * from ".$dbname.".sdm_absensidt where (tanggal between '".$tglDb1."'  and '".$tglDb2."') and karyawanid='".$_POST['idKry']."' order by tanggal asc,jam desc";// echo $str;exit();*/
-	$str="select * from (SELECT *, timediff(jam,'".$jamMasuk[$kdOrg]['reguler']."') as lateness, timediff('".$jamPulang[$kdOrg]['reguler']."',jamPlg) as early FROM ".$dbname.".sdm_absensidt ORDER BY jam DESC) AS j  
+	$str="select * from (SELECT * FROM ".$dbname.".sdm_absensidt ORDER BY jam DESC) AS j  
 	where (tanggal between '".$tglDb1."'  
 	and '".$tglDb2."') and karyawanid='".$_POST['idKry']."' 
 	GROUP BY tanggal
@@ -174,22 +131,9 @@ elseif($_GET['proses']=='preview'){
 	$no=0;
 	while($res=mysql_fetch_assoc($re))
 	{
-		$lateness = (strtotime($res['lateness']) > 0 ) ? $res['lateness'] : '-';
-		$early = (strtotime($res['early'])>0) ? $res['early'] : '-';
-		//$lateness = $tg
 		$sShift="select keterangan from ".$dbname.".sdm_5absensi where kodeabsen='".$res['absensi']."'";
 		$qShif=mysql_query($sShift) or die(mysql_error());
 		$rShift=mysql_fetch_assoc($qShif);
-
-		if(strtolower($res['penjelasan'])=="off"){
-			$lateness="-";
-			$early="-";
-		}
-
-		if(strtotime($res['jam'])>=strtotime($jamPulang[$kdOrg]['reguler'])){//jam masuk > jam pulang reguler (shift malam)
-			$lateness=getTimeDiff($jamMasuk[$kdOrg]['shiftMalam'],$res['jam']);
-			$early   =getTimeDiff($res['jamPlg'],$jamPulang[$kdOrg]['shiftMalam']);
-		}
 
 		$no+=1;
 		$table.="
@@ -199,9 +143,7 @@ elseif($_GET['proses']=='preview'){
 				<td>".getHari($res['tanggal'])."
 				<td>".$rShift['keterangan']."
 				<td>".$res['jam']."
-				<td>".$lateness."
 				<td>".$res['jamPlg']."
-				<td>".$early."
 				<td>".$res['penjelasan']."
 				<td class='smbr'>".($res['sumber']=='F'?'Dari Fingerprint':'')."
 		</tr>";
