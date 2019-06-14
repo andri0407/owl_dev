@@ -47,6 +47,34 @@ function getTimeDiff($time1,$time2){
 }
 
 
+$jamMasuk = [
+		'MDHO'=>['reguler'=>'08:00:00',
+				 'shiftPagi'=>'08:00:00',
+				 'shiftMalam'=>'20:00:00'],
+		'BGRE'=>['reguler'=>'07:00:00',
+				 'shiftPagi'=>'08:00:00',
+				 'shiftMalam'=>'20:00:00'],
+
+	]; 
+
+	$jamMasuk['SLRO']=$jamMasuk['MDHO'];
+	$jamMasuk['KBHE']=$jamMasuk['KAME']=$jamMasuk['DRME']=$jamMasuk['BGRE'];
+
+	$jamPulang = [
+		'MDHO'=>['reguler'=>'17:00:00',
+				 'shiftPagi'=>'19:59:00',
+				 'shiftMalam'=>'07:59:00'],
+		'BGRE'=>['reguler'=>'16:00:00',
+				 'shiftPagi'=>'19:59:00',
+				 'shiftMalam'=>'07:59:00'],
+
+	]; 
+
+	$jamPulang['SLRO']=$jamPulang['MDHO'];
+	$jamPulang['KBHE']=$jamPulang['KAME']=$jamPulang['DRME']=$jamPulang['BGRE'];
+
+
+
 if($_GET['proses']=='getKry'){
 	$optKry="<option value=''>".$_SESSION['lang']['pilihdata']."</option>";
 	$kdeOrg=$_POST['kdeOrg'];
@@ -144,40 +172,19 @@ elseif($_GET['proses']=='preview'){
 		</thead>
 		<tbody>
 	";
-	$jamMasuk = [
-		'MDHO'=>['reguler'=>'08:00:00',
-				 'shiftPagi'=>'08:00:00',
-				 'shiftMalam'=>'20:00:00'],
-		'BGRE'=>['reguler'=>'07:00:00',
-				 'shiftPagi'=>'08:00:00',
-				 'shiftMalam'=>'20:00:00'],
-
-	]; 
-
-	$jamMasuk['SLRO']=$jamMasuk['MDHO'];
-	$jamMasuk['KBHE']=$jamMasuk['KAME']=$jamMasuk['DRME']=$jamMasuk['BGRE'];
-
-	$jamPulang = [
-		'MDHO'=>['reguler'=>'17:00:00',
-				 'shiftPagi'=>'19:59:00',
-				 'shiftMalam'=>'07:59:00'],
-		'BGRE'=>['reguler'=>'16:00:00',
-				 'shiftPagi'=>'19:59:00',
-				 'shiftMalam'=>'07:59:00'],
-
-	]; 
-
-	$jamPulang['SLRO']=$jamPulang['MDHO'];
-	$jamPulang['KBHE']=$jamPulang['KAME']=$jamPulang['DRME']=$jamPulang['BGRE'];
+	
 
 
 	/*$str="select * from ".$dbname.".sdm_absensidt where (tanggal between '".$tglDb1."'  and '".$tglDb2."') and karyawanid='".$_POST['idKry']."' order by tanggal asc,jam desc";// echo $str;exit();*/
-	$str="select * from (SELECT *, timediff(jam,'".$jamMasuk[$kdOrg]['reguler']."') as lateness, timediff('".$jamPulang[$kdOrg]['reguler']."',jamPlg) as early FROM ".$dbname.".sdm_absensidt ORDER BY jam DESC) AS j  
+	// echo $str;exit();
+
+	$strAbsensi="select * from (SELECT *, timediff(jam,'".$jamMasuk[$kdOrg]['reguler']."') as lateness, timediff('".$jamPulang[$kdOrg]['reguler']."',jamPlg) as early FROM ".$dbname.".sdm_absensidt ORDER BY jam DESC) AS j  
 	where (tanggal between '".$tglDb1."'  
 	and '".$tglDb2."') and karyawanid='".$_POST['idKry']."' 
 	GROUP BY tanggal
-	order by tanggal asc,jam desc";// echo $str;exit();
-	$re=mysql_query($str);
+	order by tanggal asc,jam desc";
+
+	$re=mysql_query($strAbsensi);
 	$no=0;
 	while($res=mysql_fetch_assoc($re))
 	{
@@ -395,14 +402,37 @@ elseif($_GET['proses']=='pdf'){
 			//$pdf->Cell(25,5,'Total',1,1,'C',1);
 			$pdf->SetFillColor(255,255,255);
 			$pdf->SetFont('Arial','',9);
-				$str="select * from ".$dbname.".sdm_absensidt where (tanggal between '".$tglDb1."'  and '".$tglDb2."') and karyawanid='".$_GET['idKry']."' order by tanggal asc";// echo $str;exit();
-				$re=mysql_query($str);
+				/*$str="select * from ".$dbname.".sdm_absensidt where (tanggal between '".$tglDb1."'  and '".$tglDb2."') and karyawanid='".$_GET['idKry']."' order by tanggal asc";*/
+				// echo $str;exit();
+
+				$strAbsensi="select * from (SELECT *, timediff(jam,'".$jamMasuk[$kdOrg]['reguler']."') as lateness, timediff('".$jamPulang[$kdOrg]['reguler']."',jamPlg) as early FROM ".$dbname.".sdm_absensidt ORDER BY jam DESC) AS j  
+					where (tanggal between '".$tglDb1."'  
+					and '".$tglDb2."') and karyawanid='".$_GET['idKry']."' 
+					GROUP BY tanggal
+					order by tanggal asc,jam desc";
+					//exit($strAbsensi);
+				$re=mysql_query($strAbsensi);
 				$no=0;
 				while($res=mysql_fetch_assoc($re))
 				{
+
+					$lateness = (strtotime($res['lateness']) > 0 ) ? $res['lateness'] : '-';
+					$early = (strtotime($res['early'])>0) ? $res['early'] : '-';
+					//$lateness = $tg
 					$sShift="select keterangan from ".$dbname.".sdm_5absensi where kodeabsen='".$res['absensi']."'";
 					$qShif=mysql_query($sShift) or die(mysql_error());
 					$rShift=mysql_fetch_assoc($qShif);
+
+					if(strtolower($res['penjelasan'])=="off"){
+						$lateness="-";
+						$early="-";
+					}
+
+					if(strtotime($res['jam'])>=strtotime($jamPulang[$kdOrg]['reguler'])){//jam masuk > jam pulang reguler (shift malam)
+						$lateness=getTimeDiff($jamMasuk[$kdOrg]['shiftMalam'],$res['jam']);
+						$early   =getTimeDiff($res['jamPlg'],$jamPulang[$kdOrg]['shiftMalam']);
+					}
+
 
 					$no+=1;
 					$pdf->Cell(8,5,$no,1,0,'L',1);
