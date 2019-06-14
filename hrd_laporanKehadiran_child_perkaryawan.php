@@ -101,6 +101,14 @@ elseif($_GET['proses']=='preview'){
 	$qOrg=mysql_query($sOrg) or die(mysql_error());
 	$rOrg=mysql_fetch_assoc($qOrg);
 
+	if(strtolower($kdOrg)=="mdho"){
+		$thLateness="<td>Lateness";
+		$thEarly="<td>Early";
+	}else{
+		$thLateness="";
+		$thEarly="";
+	}
+
 	$table="
 	<style>
 		.smbr{
@@ -129,9 +137,9 @@ elseif($_GET['proses']=='preview'){
 			<td>Hari
 			<td>Absen
 			<td>Masuk (In)
-			<td>Lateness 
+			".$thLateness."
 			<td>Keluar (Out)
-			<td>Early
+			".$thEarly."
 			<td>Keterangan
 		</thead>
 		<tbody>
@@ -191,6 +199,16 @@ elseif($_GET['proses']=='preview'){
 		}
 
 		$no+=1;
+
+		if(strtolower($kdOrg)=="mdho"){
+			$tdLateness="<td>".$lateness;
+			$tdEarly="<td>".$early;
+			
+		}else{
+			$tdLateness="";
+			$tdEarly="";
+		}
+
 		$table.="
 		<tr  class=rowcontent>
 				<td>".$no."
@@ -198,9 +216,9 @@ elseif($_GET['proses']=='preview'){
 				<td>".getHari($res['tanggal'])."
 				<td>".$rShift['keterangan']."
 				<td>".$res['jam']."
-				<td>".$lateness."
+				".$tdLateness."
 				<td>".$res['jamPlg']."
-				<td>".$early."
+				".$tdEarly."
 				<td>".$res['penjelasan']."
 				<td class='smbr'>".($res['sumber']=='F'?'Dari Fingerprint':'')."
 		</tr>";
@@ -360,12 +378,18 @@ elseif($_GET['proses']=='pdf'){
 			$pdf->SetFont('Arial','B',9);
 			$pdf->SetFillColor(220,220,220);
 			$pdf->Cell(8,5,'No',1,0,'L',1);
-			$pdf->Cell(40,5,'Tanggal',1,0,'C',1);
+			$pdf->Cell(20,5,'Tanggal',1,0,'C',1);
 			$pdf->Cell(20,5,'Hari',1,0,'C',1);
-			$pdf->Cell(35,5,'Absensi',1,0,'C',1);
+			$pdf->Cell(25,5,'Absensi',1,0,'C',1);
 			$pdf->Cell(20,5,'Masuk (In)',1,0,'C',1);
+			if(strtolower($kdOrg)=='mdho'){
+				$pdf->Cell(20,5,'Lateness',1,0,'C',1);
+			}
 			$pdf->Cell(20,5,'Keluar (Out)',1,0,'C',1);
-			$pdf->Cell(50,5,$_SESSION['lang']['keterangan'],1,1,'C',1);
+			if(strtolower($kdOrg)=='mdho'){
+				$pdf->Cell(20,5,'Early',1,0,'C',1);
+			}
+			$pdf->Cell(40,5,$_SESSION['lang']['keterangan'],1,1,'C',1);
 
 
 			//$pdf->Cell(25,5,'Total',1,1,'C',1);
@@ -382,12 +406,18 @@ elseif($_GET['proses']=='pdf'){
 
 					$no+=1;
 					$pdf->Cell(8,5,$no,1,0,'L',1);
-					$pdf->Cell(40,5,tglIndo($res['tanggal']),1,0,'L',1);
+					$pdf->Cell(20,5,tglIndo($res['tanggal']),1,0,'L',1);
 					$pdf->Cell(20,5,getHari($res['tanggal']),1,0,'L',1);
-					$pdf->Cell(35,5,$rShift['keterangan'],1,0,'C',1);
+					$pdf->Cell(25,5,$rShift['keterangan'],1,0,'C',1);
 					$pdf->Cell(20,5,$res['jam'],1,0,'C',1);
+					if(strtolower($kdOrg)=='mdho'){
+						$pdf->Cell(20,5,$lateness,1,0,'C',1);
+					}
 					$pdf->Cell(20,5,$res['jamPlg'],1,0,'C',1);
-					$pdf->Cell(50,5,$res['penjelasan'],1,1,'L',1);
+					if(strtolower($kdOrg)=='mdho'){
+						$pdf->Cell(20,5,$early,1,0,'C',1);
+					}
+					$pdf->Cell(40,5,$res['penjelasan'],1,1,'L',1);
 				}
 
 
